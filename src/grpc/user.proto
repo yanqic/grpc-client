@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package app;
+
+// Declare a service for each controller you have
+service UserController {
+  // Declare an rpc for each method that is called via gRPC
+  rpc GetUserInfo (QueryDto) returns (UserInfo) {};
+}
+
+// Declare the types used above
+message QueryDto {
+  int32 userid = 1;
+}
+message UserInfo {
+  int32 userid = 1;
+  string name = 2;
+  int32 sex = 3;
+
+}

@@ -7,6 +7,12 @@ export const microserviceOptions: ClientOptions = {
   options: {
     package: 'app',
     url: '0.0.0.0:50051',
-    protoPath: join(__dirname, '../../src/grpc/app.proto'),
+    protoPath: [
+      join(__dirname, '../../src/grpc/app.proto'),
+      join(__dirname, '../../src/grpc/user.proto'),
+    ],
+    loader: {
+      includeDirs: [join(__dirname, '..', 'protos')],
+    },
   },
 };

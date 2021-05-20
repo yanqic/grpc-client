@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { Client, ClientGrpc } from '@nestjs/microservices';
-import { IGrpcService } from 'src/grpc/grpc.interface';
+import { IAppService, IUserService } from 'src/grpc/grpc.interface';
 import { microserviceOptions } from 'src/grpc/grpc.option';
 import { AppService } from './app.service';
 
@@ -11,12 +11,16 @@ export class AppController {
   @Client(microserviceOptions)
   private client: ClientGrpc;
 
-  private grpcService: IGrpcService;
+  private appGrpcService: IAppService;
+  private userGrpcService: IUserService;
 
   constructor(private readonly appService: AppService) {}
 
   onModuleInit() {
-    this.grpcService = this.client.getService<IGrpcService>('AppController');
+    this.appGrpcService = this.client.getService<IAppService>('AppController');
+    this.userGrpcService = this.client.getService<IUserService>(
+      'UserController',
+    );
   }
 
   @Get()
@@ -27,6 +31,11 @@ export class AppController {
   @Post('add')
   async accumulate(@Body('data') data: number[]) {
     this.logger.log('Adding ' + data.toString());
-    return this.grpcService.accumulate({ data });
+    return this.appGrpcService.accumulate({ data });
+  }
+
+  @Get('user')
+  getUserInfo(@Query('userid') userid: number): any {
+    return this.userGrpcService.getUserInfo({ userid });
   }
 }
